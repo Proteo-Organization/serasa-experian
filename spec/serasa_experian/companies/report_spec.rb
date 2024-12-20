@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'byebug'
 require_relative '../../../lib/serasa_experian/companies/report'
 require_relative '../../../lib/serasa_experian/client'
 
