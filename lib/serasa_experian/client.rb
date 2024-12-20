@@ -4,8 +4,7 @@ require_relative 'authentication'
 
 module SerasaExperian
   class Client
-    attr_accessor :access_token
-    attr_reader :base_url, :client_id, :client_secret
+    attr_reader :base_url, :client_id, :client_secret, :access_token
 
     def initialize(client_id: nil, client_secret: nil, environment: nil)
       config = SerasaExperian.configuration

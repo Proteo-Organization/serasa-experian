@@ -270,6 +270,7 @@ DEPENDENCIES
   rubocop (~> 1.21)
   serasa_experian!
   uri (= 1.0.2)
+  webmock
 
 BUNDLED WITH
    2.5.21
