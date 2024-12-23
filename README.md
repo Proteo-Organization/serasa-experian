@@ -1,43 +1,61 @@
-# Serasa::Experian
+# SerasaExperian
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/serasa/experian`. To experiment with that code, run `bin/console` for an interactive prompt.
+Serasa Experian makes it easier to perform company data checks on Serasa, providing methods that perform the query based on the parameters provided.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+1. **Add the gem to your project**
+   Add the following line to your `Gemfile` and run `bundle install`:
+   ```ruby
+   gem "serasa_experian", git:"git@github.com:Null-Bug-Company/serasa-experian.git"
+   ```
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
-
+2. **Create initializer files**
+   Run the generator to create the initializer file:
+   ```bash
+   rails generate serasa_experian:install
+   ```
+   After generating the initializer file, it is possible to configure environment variables to store fixed credentials. If an empty request is made that requires the clientID and clientSecret to be informed, the value informed in the environment variables will be used instead.
 ## Usage
 
-TODO: Write usage instructions here
+### Authentication
 
-## Development
+To authenticate the user, create an instance of `SerasaExperian::Client` and call the `authentication` method, passing the client_id and client_secret as parameters.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+#### Valid Attributes:
+- **client_id**: clientID provided by Serasa itself for user authentication in the API. **Required**
+- **client_secret**: clientSecret provided by Serasa itself for user authentication in the API. **Required**
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+#### Example:
+```ruby
+client = SerasaExperian::Client.new
+client.create(client_id: 'exemple ID', client_secret: '123456')
+```
+---
 
-## Contributing
+### Report
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/serasa-experian. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/serasa-experian/blob/master/CODE_OF_CONDUCT.md).
+To perform a query on Serasa-Experian, it is necessary to create an instance of `SerasaExperian::Company::Report` passing a client as a parameter and call the fetch method, passing the attributes necessary for the search.
 
-## License
+##### Valid Attributes:
+- **document**: The CNPJ that will be queried, which can be passed with or without formatting to perform the request. **Required**
+- **report_name**: This is the name of the report that will be performed, which can be any of the three available in the manual provided by Serasa. **Required**
+- **optional_features**: Name of the features chosen to perform the query, must be passed in array format separated by an empty space (" "). The name of the features must be consulted in the manual provided by Serasa.
+- **report_parameters**: Some features require additional information to perform the query, this information must be passed in json format within an array. The gem itself will process this parameter to perform the query. The manual provided by Serasa must be consulted to verify which ones require this parameter.
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Serasa::Experian project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/serasa-experian/blob/master/CODE_OF_CONDUCT.md).
+##### Example:
+```ruby
+report_service = SerasaExperian::Companies::Report.new(client)
+esponse = report_service.fetch(
+        document: '12345678912345',
+        report_name: 'RELATORIO',
+        optional_features: ['EXEMPLO_1' 'EXEMPLO_2' 'EXEMPLO_3'],
+        report_parameters: [       
+          {
+            "name": "NAME_EXEMPLE",
+            "value": "EXAMPLE_123_VALUE"
+          }
+        ]
+     )
+```
+---
