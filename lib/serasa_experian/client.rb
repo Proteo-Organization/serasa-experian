@@ -22,7 +22,14 @@ module SerasaExperian
     private
 
     def environment_base_url(env)
-      env == :production ? Configuration::PRODUCTION_BASE_URL : Configuration::DEVELOPMENT_BASE_URL
+      case env.to_s.to_sym
+      when :production
+        SerasaExperian::Configuration::PRODUCTION_BASE_URL
+      when :development
+        SerasaExperian::Configuration::DEVELOPMENT_BASE_URL
+      else
+        raise ArgumentError, "Invalid environment: #{env}. Use :production or :development."
+      end
     end
   end
 end
