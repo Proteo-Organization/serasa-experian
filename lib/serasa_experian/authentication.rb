@@ -19,9 +19,8 @@ module SerasaExperian
       response = Net::HTTP.post(uri, nil, headers)
 
       parsed_response = JSON.parse(response.body)
-
       unless response.is_a?(Net::HTTPSuccess)
-        raise "Authentication failed: #{parsed_response['error'] || 'Unknown error'}"
+        raise "Authentication failed: #{parsed_response[0]['message'] || 'Unknown error'}"
       end
 
       parsed_response['accessToken']
