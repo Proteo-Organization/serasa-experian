@@ -9,8 +9,8 @@ module SerasaExperian
     def initialize(client_id: nil, client_secret: nil, environment: nil)
       config = SerasaExperian.configuration
 
-      @client_id = client_id || config.client_id
-      @client_secret = client_secret || config.client_secret
+      @client_id = client_id || config.client_id || rails_credentials(:client_id)
+      @client_secret = client_secret || config.client_secret || rails_credentials(:client_secret)
       @base_url = environment ? environment_base_url(environment) : config.base_url
 
       raise 'Client ID and Client Secret are required' unless @client_id && @client_secret
