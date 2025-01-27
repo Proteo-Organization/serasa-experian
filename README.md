@@ -15,12 +15,18 @@ Serasa Experian makes it easier to perform company data checks on Serasa, provid
    ```bash
    rails generate serasa_experian:install
    ```
+
+3. **Adjust the initializer to use credentials as needed for your project.**
+   Run the generator to create the initializer file:
+   ```bash
+   rails generate serasa_experian:install
+   ```
    After generating the initializer file, it is possible to configure environment variables to store fixed credentials. If an empty request is made that requires the clientID and clientSecret to be informed, the value informed in the environment variables will be used instead.
 ## Usage
 
 ### Authentication
 
-To authenticate the user, create an instance of `SerasaExperian::Client` and call the `authentication` method, passing the client_id and client_secret as parameters.
+To authenticate the user, create an instance of `SerasaExperian::Client` passing the client_id and client_secret as parameters, and call the authentication method `authenticate` to return acess_token.
 
 #### Valid Attributes:
 - **client_id**: clientID provided by Serasa itself for user authentication in the API. **Required**
@@ -28,8 +34,8 @@ To authenticate the user, create an instance of `SerasaExperian::Client` and cal
 
 #### Example:
 ```ruby
-client = SerasaExperian::Client.new
-client.create(client_id: 'exemple ID', client_secret: '123456')
+client = SerasaExperian::Client.new(client_id: 'exemple ID', client_secret: '123456')
+client.authenticate
 ```
 ---
 
@@ -46,7 +52,7 @@ To perform a query on Serasa-Experian, it is necessary to create an instance of 
 ##### Example:
 ```ruby
 report_service = SerasaExperian::Companies::Report.new(client)
-esponse = report_service.fetch(
+response = report_service.fetch(
         document: '12345678912345',
         report_name: 'RELATORIO',
         optional_features: ['EXEMPLO_1' 'EXEMPLO_2' 'EXEMPLO_3'],
