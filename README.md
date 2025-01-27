@@ -17,11 +17,26 @@ Serasa Experian makes it easier to perform company data checks on Serasa, provid
    ```
 
 3. **Adjust the initializer to use credentials as needed for your project.**
-   Run the generator to create the initializer file:
-   ```bash
-   rails generate serasa_experian:install
+   ```ruby
+      # frozen_string_literal: true
+      
+      # Configuração inicial da gem SerasaExperian / Initial configuration of the SerasaExperian gem
+      SerasaExperian.configure do |config|
+        # Defina as credenciais fixas aqui, se desejar / Set fixed credentials here, if desired
+        config.client_id = ENV['SERASA_CLIENT_ID']
+        config.client_secret = ENV['SERASA_CLIENT_SECRET']
+      
+        # Ou deixe vazio para usar as credenciais do Rails.credentials / Or leave empty to use Rails.credentials
+        # config.client_id = nil
+        # config.client_secret = nil
+      
+        # Configuração do ambiente / Environment configuration
+        config.environment = Rails.env.production? ? :production : :development
+      end
+
    ```
-   After generating the initializer file, it is possible to configure environment variables to store fixed credentials. If an empty request is made that requires the clientID and clientSecret to be informed, the value informed in the environment variables will be used instead.
+After generating the initializer file, you can configure how to store fixed credentials, such as binding them to environment variables or storing them in the Rails credentials file, depending on how and whether you want to provide this data. If an empty request is made that requires the clientID and clientSecret to be provided, the value provided in the environment variables or credentials will be used.
+
 ## Usage
 
 ### Authentication
