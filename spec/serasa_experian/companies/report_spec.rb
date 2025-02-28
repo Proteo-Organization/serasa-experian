@@ -25,7 +25,7 @@ RSpec.describe SerasaExperian::Companies::Report do
               'Content-Type' => 'application/json'
             }
           )
-          .to_return(status: 200, body: { report: 'mock_report_data' }.to_json)
+          .to_return(status: 200, body: { status: 200, report: 'mock_report_data' }.to_json)
       end
 
       it 'returns the report data' do
@@ -35,6 +35,7 @@ RSpec.describe SerasaExperian::Companies::Report do
           optional_features: %w[FEATURE_A FEATURE_B],
           report_parameters: [{ name: 'LIMITE_CREDITO', value: 'HLC2' }]
         )
+        response = response[:body]
         expect(response['report']).to eq('mock_report_data')
       end
     end
@@ -52,16 +53,15 @@ RSpec.describe SerasaExperian::Companies::Report do
               'Content-Type' => 'application/json'
             }
           )
-          .to_return(status: 400, body: { error: 'Invalid request' }.to_json)
+          .to_return(status: 400, body: { status: 400, error: 'Invalid request' }.to_json)
       end
 
       it 'raises an HTTP error' do
-        expect do
-          report_service.fetch(
-            document: '12.345.678/0001-90',
-            report_name: 'BASIC_REPORT'
-          )
-        end.to raise_error('HTTP Error 400: Invalid request')
+        response = report_service.fetch(
+          document: '12.345.678/0001-90',
+          report_name: 'BASIC_REPORT'
+        )
+        expect(response[:error]).to eq('Invalid request')
       end
     end
   end

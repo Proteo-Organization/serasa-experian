@@ -26,11 +26,11 @@ RSpec.describe SerasaExperian::Authentication do
     context 'when authentication fails' do
       before do
         stub_request(:post, "#{base_url}/security/iam/v1/client-identities/login")
-          .to_return(status: 401, body: { error: 'Invalid credentials' }.to_json)
+          .to_return(status: 401, body: [{ 'code' => '9', 'message' => 'Wrong Client Id or Client Secret.' }].to_json)
       end
 
       it 'raises an error' do
-        expect { auth.fetch_token }.to raise_error('Authentication failed: Invalid credentials')
+        expect { auth.fetch_token }.to raise_error('Authentication failed: Wrong Client Id or Client Secret.')
       end
     end
   end
