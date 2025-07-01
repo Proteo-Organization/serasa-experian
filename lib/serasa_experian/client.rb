@@ -9,11 +9,11 @@ module SerasaExperian
     def initialize(client_id: nil, client_secret: nil, environment: nil)
       config = SerasaExperian.configuration
 
-      @client_id = client_id || config.client_id || rails_credentials(:client_id)
-      @client_secret = client_secret || config.client_secret || rails_credentials(:client_secret)
-      @base_url = environment ? environment_base_url(environment) : config.base_url
+      @client_id = resolve_client_id(client_id, config)
+      @client_secret = resolve_client_secret(client_secret, config)
+      @base_url = resolve_base_url(environment, config)
 
-      raise 'Client ID and Client Secret are required' unless @client_id && @client_secret
+      validate_credentials!
     end
 
     def authenticate
@@ -22,6 +22,22 @@ module SerasaExperian
     end
 
     private
+
+    def resolve_client_id(client_id, config)
+      client_id || config.client_id || rails_credentials(:client_id)
+    end
+
+    def resolve_client_secret(client_secret, config)
+      client_secret || config.client_secret || rails_credentials(:client_secret)
+    end
+
+    def resolve_base_url(environment, config)
+      environment ? environment_base_url(environment) : config.base_url
+    end
+
+    def validate_credentials!
+      raise 'Client ID and Client Secret are required' unless @client_id && @client_secret
+    end
 
     def rails_credentials(key)
       Rails.application.credentials.dig(:serasa_experian, key) if defined?(Rails)

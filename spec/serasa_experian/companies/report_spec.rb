@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/serasa_experian/companies/report'
+require_relative '../../../lib/serasa_experian/reports/companies/report'
 require_relative '../../../lib/serasa_experian/client'
 
-RSpec.describe SerasaExperian::Companies::Report do
+RSpec.describe SerasaExperian::Reports::Companies::Report do
   let(:client) { instance_double(SerasaExperian::Client, base_url: 'https://mock-api.serasaexperian.com.br', access_token: 'mock_access_token') }
   let(:report_service) { described_class.new(client) }
 
@@ -17,7 +17,8 @@ RSpec.describe SerasaExperian::Companies::Report do
               reportName: 'BASIC_REPORT',
               optionalFeatures: 'FEATURE_A,FEATURE_B',
               reportParameters: Base64.strict_encode64({ reportParameters: [{ name: 'LIMITE_CREDITO',
-                                                                              value: 'HLC2' }] }.to_json)
+                                                                              value: 'HLC2' }] }.to_json),
+              federalUnit: 'SP'
             ),
             headers: {
               'Authorization' => 'Bearer mock_access_token',
@@ -33,7 +34,8 @@ RSpec.describe SerasaExperian::Companies::Report do
           document: '12.345.678/0001-90',
           report_name: 'BASIC_REPORT',
           optional_features: %w[FEATURE_A FEATURE_B],
-          report_parameters: [{ name: 'LIMITE_CREDITO', value: 'HLC2' }]
+          report_parameters: [{ name: 'LIMITE_CREDITO', value: 'HLC2' }],
+          federal_unit: 'SP'
         )
         response = response[:body]
         expect(response['report']).to eq('mock_report_data')
