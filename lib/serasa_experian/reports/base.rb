@@ -4,12 +4,23 @@ require 'net/http'
 require 'json'
 
 module SerasaExperian
-  module Companies
+  module Reports
     class Base
       attr_reader :client
 
       def initialize(client)
         @client = client
+      end
+
+      def fetch(document:, report_name:, optional_features: nil, report_parameters: nil, federal_unit: nil)
+        params = {
+          reportName: report_name,
+          optionalFeatures: format_optional_features(optional_features),
+          reportParameters: format_report_parameters(report_parameters),
+          federalUnit: federal_unit
+        }.compact
+        headers = build_headers(document)
+        get(self.class::REPORT_ENDPOINT, params, headers)
       end
 
       private
@@ -43,6 +54,31 @@ module SerasaExperian
         JSON.parse(body)
       rescue JSON::ParserError
         body
+      end
+
+      def format_optional_features(features)
+        return nil if features.nil? || features.empty?
+
+        features.join(',')
+      end
+
+      def format_report_parameters(parameters)
+        return nil if parameters.nil? || parameters.empty?
+
+        json = { reportParameters: parameters }.to_json
+        Base64.strict_encode64(json)
+      end
+
+      def build_headers(document)
+        {
+          'Content-Type' => 'application/json',
+          'Authorization' => "Bearer #{@client.access_token}",
+          'X-Document-Id' => sanitize_document(document)
+        }
+      end
+
+      def sanitize_document(document)
+        document.to_s.gsub(/\D/, '')
       end
 
       def headers
