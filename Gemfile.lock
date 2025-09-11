@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    serasa_experian (0.1.0)
+    serasa_experian (0.1.1)
       activesupport
       faraday
       rails
