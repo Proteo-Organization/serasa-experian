@@ -35,19 +35,15 @@ module SerasaExperian
 
       def handle_response(response)
         parsed_body = parse_json(response.body)
-
-        case response
-        when Net::HTTPSuccess
+        if response.is_a?(Net::HTTPSuccess)
           { status: response.code.to_i, body: parsed_body }
-        when Net::HTTPClientError, Net::HTTPServerError
-          { status: response.code.to_i, error: handle_http_error(response) }
         else
-          { status: response.code.to_i, error: "Unexpected response: #{response.code} - #{response.message}" }
+          { status: response.code.to_i, error: handle_http_error(response) }
         end
       end
 
       def handle_http_error(response)
-        parse_json(response.body)['error'] || response.body
+        response.body
       end
 
       def parse_json(body)
